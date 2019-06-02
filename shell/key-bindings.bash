@@ -41,7 +41,14 @@ __fzf_cd__() {
   local cmd dir
   cmd="${FZF_ALT_C_COMMAND:-"command find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
     -o -type d -print 2> /dev/null | cut -b3-"}"
-  dir=$(eval "$cmd" | FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-z:ignore $FZF_DEFAULT_OPTS $FZF_ALT_C_OPTS" $(__fzfcmd) +m) && printf 'cd -- %q' "$dir"
+  # Kill the search as soon as fzf finishes.
+  # This is needed because "bfs" continues its search even after the pipe
+  # is closed, which may take forever on a slow filesystem.
+  # https://unix.stackexchange.com/a/404277
+  # https://stackoverflow.com/a/15170225
+  { FZF_DEFAULT_OPTS="--height ${FZF_TMUX_HEIGHT:-40%} --reverse --bind=ctrl-z:ignore $FZF_DEFAULT_OPTS $FZF_ALT_C_OPTS" $(__fzfcmd) +m; kill "$!" 2>/dev/null; } < <(eval "$cmd") | while read -r dir; do
+    printf 'cd -- %q' "$dir"
+  done
 }
 
 __fzf_history__() {
