@@ -6,7 +6,7 @@ require (
 	github.com/mattn/go-isatty v0.0.14
 	github.com/mattn/go-runewidth v0.0.13
 	github.com/mattn/go-shellwords v1.0.12
-	github.com/rivo/uniseg v0.2.0
+	github.com/rivo/uniseg v0.4.2
 	github.com/saracen/walker v0.1.2
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c
